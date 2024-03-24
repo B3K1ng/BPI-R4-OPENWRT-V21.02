@@ -31,6 +31,27 @@ gcc binutils bzip2 flex python3 perl make find grep diff unzip gawk getopt
 subversion libz-dev libc-dev rsync which
 ```
 
+### Alternative Quickstart
+
+tl;dr
+
+Building step you can find https://github.com/danpawlik/openwrt-builder
+
+```sh
+cat << EOF >> feeds.conf.default
+src-git mtksdk https://git01.mediatek.com/openwrt/feeds/mtk-openwrt-feeds
+EOF
+git add feeds.conf.default; git commit -m "Add MediaTek feeds"
+
+./scripts/feeds update -a && ./scripts/feeds install -a
+
+sed -i 's@        --with-ncursesw@        --with-ncursesw \        --without-cryptsetup@g' package/utils/util-linux/Makefilea
+
+### If still cryptsetup is needed:
+# make -j $(nproc) package/cryptsetup/{clean,compile}
+
+```
+
 ### Quickstart
 
 1. Run `./scripts/feeds update -a` to obtain all the latest package definitions
