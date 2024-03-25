@@ -50,6 +50,13 @@ sed -i 's@        --with-ncursesw@        --with-ncursesw \        --without-cry
 ### If still cryptsetup is needed:
 # make -j $(nproc) package/cryptsetup/{clean,compile}
 
+# build
+## WARNING: there is some missing config param to set, so let's
+## build it by using V=s, so it will ask if the module should be
+## included. Otherwise, it will fail.
+## Workaround:
+echo "n" | make -j $(nproc)  defconfig download clean world V=s
+
 ```
 
 ### Quickstart
