@@ -38,14 +38,14 @@ tl;dr
 Building step you can find https://github.com/danpawlik/openwrt-builder
 
 ```sh
-cat << EOF >> feeds.conf.default
-src-git mtksdk https://git01.mediatek.com/openwrt/feeds/mtk-openwrt-feeds
+cat << EOF >> feeds.conf
+src-git-full mtk_openwrt_feed https://git01.mediatek.com/openwrt/feeds/mtk-openwrt-feeds
 EOF
-git add feeds.conf.default; git commit -m "Add MediaTek feeds"
+git add feeds.conf; git commit -m "Add MediaTek feeds"
 
 ./scripts/feeds update -a && ./scripts/feeds install -a
 
-sed -i 's@        --with-ncursesw@        --with-ncursesw \        --without-cryptsetup@g' package/utils/util-linux/Makefilea
+sed -i 's@        --with-ncursesw@        --with-ncursesw \        --without-cryptsetup@g' package/utils/util-linux/Makefile
 
 ### If still cryptsetup is needed:
 # make -j $(nproc) package/cryptsetup/{clean,compile}
@@ -59,12 +59,13 @@ echo "n" | make -j $(nproc)  defconfig download clean world V=s
 
 # NOTE: build OpenWRT in openwrt dir
 
-# more easy way
+# if GPT_SD or other files are missing, you can find in bpi-r4-files.
 # tl;dr to create needed files:
 
 git clone https://github.com/mtk-openwrt/u-boot && cd u-boot
 make mt7988_sd_rfb_defconfig
 make CROSS_COMPILE=/home/user/BPI-R4-OPENWRT-V21.02/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/bin/aarch64-openwrt-linux-
+# more: https://forum.openwrt.org/t/tutorial-build-customize-and-use-mediatek-open-source-u-boot-and-atf/134897
 
 # get required files
 # FIXME: Should it be with --sdmmc ?
