@@ -35,7 +35,19 @@ subversion libz-dev libc-dev rsync which
 
 tl;dr
 
-Building step you can find https://github.com/danpawlik/openwrt-builder
+Building step you can find [here](https://github.com/danpawlik/openwrt-builder)
+
+Before you start, remember to comment:
+
+```sh
+## https://github.com/BPI-SINOVOIP/BPI-R4-OPENWRT-V21.02/blob/main/package/Makefile#L64-L65
+#$(curdir)/compile: $(curdir)/cryptsetup/host/compile
+#$(curdir)/compile: $(curdir)/dtc/host/compile
+```
+
+located in `package/Makefile`.
+
+Add MediaTek feed:
 
 ```sh
 cat << EOF >> feeds.conf
@@ -45,66 +57,30 @@ git add feeds.conf; git commit -m "Add MediaTek feeds"
 
 ./scripts/feeds update -a && ./scripts/feeds install -a
 
-sed -i 's@        --with-ncursesw@        --with-ncursesw \        --without-cryptsetup@g' package/utils/util-linux/Makefile
-
-### If still cryptsetup is needed:
-# make -j $(nproc) package/cryptsetup/{clean,compile}
-
-# build
-## WARNING: there is some missing config param to set, so let's
-## build it by using V=s, so it will ask if the module should be
-## included. Otherwise, it will fail.
-## Workaround:
-echo "n" | make -j $(nproc)  defconfig download clean world V=s
-
-# NOTE: build OpenWRT in openwrt dir
-
-# if GPT_SD or other files are missing, you can find in bpi-r4-files.
-# tl;dr to create needed files:
-
-git clone https://github.com/mtk-openwrt/u-boot && cd u-boot
-make mt7988_sd_rfb_defconfig
-make CROSS_COMPILE=/home/user/BPI-R4-OPENWRT-V21.02/staging_dir/toolchain-aarch64_cortex-a53_gcc-8.4.0_musl/bin/aarch64-openwrt-linux-
-# more: https://forum.openwrt.org/t/tutorial-build-customize-and-use-mediatek-open-source-u-boot-and-atf/134897
-
-# get required files
-# FIXME: Should it be with --sdmmc ?
-python2 \
-    ./openwrt/build_dir/target-aarch64_cortex-a53_musl/arm-trusted-firmware-mediatek-mt7988-sdmmc-comb/arm-trusted-firmware-mediatek-2023.10.13~0ea67d76/tools/dev/gpt_editor/mtk_gpt.py \
-    --i ./openwrt/build_dir/target-aarch64_cortex-a53_musl/arm-trusted-firmware-mediatek-mt7988-sdmmc-comb/arm-trusted-firmware-mediatek-2023.10.13~0ea67d76/tools/dev/gpt_editor/example/mt7988-sd.json \
-    --o /tmp/GPT_SD \
-    --sdmmc
-
-# sd
-cp /tmp/GPT_SD BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/GPT_SD
-
-cp openwrt/build_dir/target-aarch64_cortex-a53_musl/u-boot-mt7988_bananapi_bpi-r4-sdmmc/u-boot-2024.01/u-boot.fip \
-    BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/fip_sd.bin
-
-cp openwrt/build_dir/target-aarch64_cortex-a53_musl/arm-trusted-firmware-mediatek-mt7988-sdmmc-comb/arm-trusted-firmware-mediatek-2023.10.13~0ea67d76/build/mt7988/release/bl2.img \
-    BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/bl2_sd.img
-
-sudo python2 ./openwrt/build_dir/target-aarch64_cortex-a53_musl/arm-trusted-firmware-mediatek-mt7988-sdmmc-comb/arm-trusted-firmware-mediatek-2023.10.13~0ea67d76/tools/dev/gpt_editor/mtk_gpt.py \
---i ./openwrt/build_dir/target-aarch64_cortex-a53_musl/arm-trusted-firmware-mediatek-mt7988-sdmmc-comb/arm-trusted-firmware-mediatek-2023.10.13~0ea67d76/tools/dev/gpt_editor/example/mt7988-emmc.json  \
---o /tmp/GPT_EMMC
-
-# emmc
-cp /tmp/GPT_EMMC BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/GPT_EMMC
-
-cp openwrt/build_dir/target-aarch64_cortex-a53_musl/arm-trusted-firmware-mediatek-mt7988-emmc-comb/arm-trusted-firmware-mediatek-2023.10.13~0ea67d76/build/mt7988/release/bl2.img \
-   BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/bl2_emmc.img
-
-cp openwrt/build_dir/target-aarch64_cortex-a53_musl/u-boot-mt7988_bananapi_bpi-r4-emmc/u-boot-2024.01/u-boot.fip \
-  BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/fip_emmc.bin
-
-# nand
-cp openwrt/build_dir/target-aarch64_cortex-a53_musl/arm-trusted-firmware-mediatek-mt7988-spim-nand-ubi-comb/arm-trusted-firmware-mediatek-2023.10.13~0ea67d76/build/mt7988/release/bl2.img \
-  BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/bl2_nand.img
-
-cp openwrt/build_dir/target-aarch64_cortex-a53_musl/u-boot-mt7988_bananapi_bpi-r4-snand/u-boot-2024.01/u-boot.fip \
-   BPI-R4-OPENWRT-V21.02/staging_dir/target-aarch64_cortex-a53_musl/image/fip_nand.bin
-
 ```
+
+WARNING: If GPT_SD or other files are missing, you can find in this project in `bpi-r4-files` dir.
+The files are available in this [project](https://github.com/BPI-SINOVOIP/BPI-R4-OPENWRT-V21.02/tree/main/staging_dir/target-aarch64_cortex-a53_musl/image).
+The `make clean` command remove them.
+You can just restore the file before running `make world`:
+
+```sh
+git checkout staging_dir/target-aarch64_cortex-a53_musl/image
+```
+
+NOTE: Workaround for mt76 after pulling mediatek feed
+
+If you choose some mt76 drivers, before executing `make world`, try:
+
+```sh
+make -j1 V=s package/kernel/mt76/{clean,compile}
+```
+
+Probably it will fail.
+Here are two options:
+
+* remove duplicated patches
+* remove mediatek feed from mt76
 
 ### Quickstart
 
