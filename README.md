@@ -59,6 +59,12 @@ git add feeds.conf; git commit -m "Add MediaTek feeds"
 
 ```
 
+Fix `kmod-nf-flow-netlink` error:
+```MakeFile
+-- DEPENDS:=+libnfnetlink +libmnl +kmod-nf-flow-netlink
+++ DEPENDS:=+libnfnetlink +libmnl +kmod-nf-flow +kmod-nfnetlink
+```
+
 WARNING: If GPT_SD or other files are missing, you can find in this project in `bpi-r4-files` dir.
 The files are available in this [project](https://github.com/BPI-SINOVOIP/BPI-R4-OPENWRT-V21.02/tree/main/staging_dir/target-aarch64_cortex-a53_musl/image).
 The `make clean` command remove them.
