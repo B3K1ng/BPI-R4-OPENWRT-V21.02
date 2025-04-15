@@ -110,7 +110,7 @@
 		mod-def0-gpios = <&pio 82 1>;
 		los-gpios = <&pio 54 0>;
 		tx-disable-gpios = <&pio 70 0>;
-		maximum-power-milliwatt = <3000>;
+		maximum-power-milliwatt = <2000>;
 	};
 
 	sfp_esp1: sfp@1 {
@@ -119,7 +119,7 @@
 		mod-def0-gpios = <&pio 83 1>;
 		los-gpios = <&pio 2 0>;
 		tx-disable-gpios = <&pio 0 0>;
-		maximum-power-milliwatt = <3000>;
+		maximum-power-milliwatt = <2000>;
 	};
 	
 	reg_1p8v: regulator-1p8v {
