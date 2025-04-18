@@ -14,7 +14,7 @@ config device
 	list ports 'lan1'
 	list ports 'lan2'
 	list ports 'lan3'
-	list ports 'eth1'
+	list ports 'sfp-lan'
 
 config interface 'lan'
 	option device 'br-lan'
@@ -26,8 +26,8 @@ config interface 'lan'
 config device
 	option name 'br-wan'
 	option type 'bridge'
-	list ports 'lan0'
-	list ports 'eth2'
+	list ports 'wan'
+	list ports 'sfp-wan'
 
 config interface 'wan'
 	option device 'br-wan'
